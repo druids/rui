@@ -13,7 +13,7 @@ Leiningen/Boot
 --------------
 
 ```clojure
-[druids/rui "0.1.0"]
+[druids/rui "0.1.1"]
 ```
 
 Documentation
