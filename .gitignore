@@ -9,6 +9,7 @@ logs/
 out/
 pom.xml.asc
 pom.xml
+resources/rui-demo/public/js/
 
 # IDE
 *.swp
