@@ -9,6 +9,8 @@
                  [reagent "0.7.0"]
                  [re-frame "0.10.2"]]
 
+  :source-paths ["src/cljs"]
+
   :profiles {:dev {:plugins [[lein-kibit "0.1.6"]
                              [jonase/eastwood "0.2.5"]
                              [lein-cljsbuild "1.1.7"]
