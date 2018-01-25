@@ -45,6 +45,10 @@
 
 
 (defn offline-panel
+  "Returns offline-panel component with background overlay and flash message that a user is offline.
+   Kwargs:
+   :modifiers - BEM modifiers
+   :messages - a map for translations"
   [& {:keys [modifiers messages]
       :or {modifiers []
            messages {:you-are-offline "You are offline"}}}]
