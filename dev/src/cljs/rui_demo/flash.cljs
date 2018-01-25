@@ -1,8 +1,7 @@
 (ns rui-demo.flash
   (:require
     [re-frame.core :refer [reg-event-db dispatch]]
-    [rui.flash.core :refer [add-message db->messages]]
-    [rui.flash.components :refer [flash]]))
+    [rui.flash :as flash]))
 
 
 (reg-event-db
@@ -12,10 +11,16 @@
 
 
 (reg-event-db
+  :flash/update-message-severity
+  (fn [db [_ severity]]
+    (assoc-in db [:flash :message-severity] severity)))
+
+
+(reg-event-db
   :flash/add
   (fn [db _]
     (-> db
-        (add-message :info (get-in db [:flash :message-text]))
+        (flash/add-message (name (get-in db [:flash :message-severity] :primary)) (get-in db [:flash :message-text]))
         (assoc-in [:flash :message-text] nil))))
 
 
@@ -29,9 +34,18 @@
   (dispatch [:flash/add]))
 
 
+(defn- update-message-severity!
+  [e]
+  (dispatch [:flash/update-message-severity (-> e .-target .-value)]))
+
+
 (defn flash-demo
   [db]
   [:div.flash-demo.card-body
    [:input {:on-change update-message-text!, :value (-> db :flash :message-text)}]
    [:button {:on-click add-message!} "Add message"]
-   [flash (db->messages db)]])
+   [:select {:on-change update-message-severity!}
+    (for [value ["primary" "secondary" "info" "danger" "warning" "success" "light" "dark"]]
+      ^{:key value}
+      [:option {:value value} value])]
+   [flash/flash (flash/db->messages db)]])

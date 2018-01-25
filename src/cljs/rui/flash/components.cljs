@@ -4,7 +4,7 @@
     [ccn.core :refer [css-class]]
     [re-frame.core :refer [dispatch]]
     [reagent.core :as reagent]
-    [rui.alerts.components :refer [alert]]
+    [rui.alerts :refer [alert]]
     [rui.flash.core :refer [->Flash]]))
 
 
