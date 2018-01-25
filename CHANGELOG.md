@@ -1,3 +1,11 @@
+## 0.2.0
+
+#### New Features
+
+  - Added components for icons #7
+  - Created API namespaces for modules #10
+  - Upgraded dev dependencies #10
+
 ## 0.1.1
 
 #### Fixed
