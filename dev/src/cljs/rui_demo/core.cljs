@@ -3,6 +3,7 @@
     [goog.dom :as dom]
     [reagent.core :as reagent]
     [re-frame.core :refer [dispatch dispatch-sync clear-subscription-cache! subscribe reg-sub]]
+    [rui-demo.buttons :refer [buttons-demo]]
     [rui-demo.icons :refer [icons-demo]]
     [rui-demo.flash :refer [flash-demo]]))
 
@@ -19,7 +20,8 @@
       [:div.container
        (let [db @db-ref]
          (for [[headline component] [["Flash" flash-demo]
-                                     ["Icons" icons-demo]]]
+                                     ["Icons" icons-demo]
+                                     ["Buttons" buttons-demo]]]
            ^{:key headline}
            [:div.card.mb-3
             [:div.card-header
