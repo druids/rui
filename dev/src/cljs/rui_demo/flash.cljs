@@ -31,7 +31,7 @@
 
 (defn flash-demo
   [db]
-  [:div.flash-demo
+  [:div.flash-demo.card-body
    [:input {:on-change update-message-text!, :value (-> db :flash :message-text)}]
    [:button {:on-click add-message!} "Add message"]
    [flash (db->messages db)]])

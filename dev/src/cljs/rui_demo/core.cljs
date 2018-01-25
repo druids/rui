@@ -3,6 +3,7 @@
     [goog.dom :as dom]
     [reagent.core :as reagent]
     [re-frame.core :refer [dispatch dispatch-sync clear-subscription-cache! subscribe reg-sub]]
+    [rui-demo.icons :refer [icons-demo]]
     [rui-demo.flash :refer [flash-demo]]))
 
 
@@ -13,10 +14,17 @@
 
 (defn- main
   []
-  (let [db (subscribe [:app])]
+  (let [db-ref (subscribe [:app])]
     (fn []
-      [:div
-       [flash-demo @db]])))
+      [:div.container
+       (let [db @db-ref]
+         (for [[headline component] [["Flash" flash-demo]
+                                     ["Icons" icons-demo]]]
+           ^{:key headline}
+           [:div.card.mb-3
+            [:div.card-header
+             [:h2 headline]]
+            [component db]]))])))
 
 
 (defn- mount-root!
