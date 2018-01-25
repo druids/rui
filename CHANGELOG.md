@@ -5,6 +5,7 @@
   - Added components for icons #7
   - Created API namespaces for modules #10
   - Upgraded dev dependencies #10
+  - Added components for buttons #8
 
 ## 0.1.1
 
