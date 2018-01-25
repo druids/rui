@@ -17,8 +17,8 @@
                              [lein-figwheel "0.5.14"]
                              [lein-doo "0.1.8"]]
                    :dependencies [[org.clojure/clojure "1.8.0"]
-                                  [re-frisk "0.5.2"]
-                                  [binaryage/devtools "0.9.7"]]}}
+                                  [re-frisk "0.5.3"]
+                                  [binaryage/devtools "0.9.9"]]}}
 
   :cljsbuild
   {:builds
