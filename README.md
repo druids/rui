@@ -21,5 +21,6 @@ Documentation
 -------------
 
 * [`rui.alerts` - Bootstrap's alerts](https://github.com/druids/rui/blob/master/src/cljs/rui/alerts/components.cljs)
+* [`rui.buttons` - Buttons components](https://github.com/druids/rui/blob/master/src/cljs/rui/buttons/components.cljs)
 * [`rui.flash` - Flash components for messages](https://github.com/druids/rui/blob/master/src/cljs/rui/flash/)
 * [`rui.icons` - Icons components based on Font Awesome](https://github.com/druids/rui/blob/master/src/cljs/rui/icons/)
