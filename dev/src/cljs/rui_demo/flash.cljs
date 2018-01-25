@@ -1,8 +1,7 @@
 (ns rui-demo.flash
   (:require
     [re-frame.core :refer [reg-event-db dispatch]]
-    [rui.flash.core :refer [add-message db->messages]]
-    [rui.flash.components :refer [flash]]))
+    [rui.flash :as flash]))
 
 
 (reg-event-db
@@ -15,7 +14,7 @@
   :flash/add
   (fn [db _]
     (-> db
-        (add-message :info (get-in db [:flash :message-text]))
+        (flash/add-message :info (get-in db [:flash :message-text]))
         (assoc-in [:flash :message-text] nil))))
 
 
@@ -34,4 +33,4 @@
   [:div.flash-demo.card-body
    [:input {:on-change update-message-text!, :value (-> db :flash :message-text)}]
    [:button {:on-click add-message!} "Add message"]
-   [flash (db->messages db)]])
+   [flash/flash (flash/db->messages db)]])
