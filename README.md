@@ -2,7 +2,8 @@ RUI - Reactive UI components
 ============================
 
 RUI contains simple reusable UI components based on Reagent and Re-frame. For more information about components see
-below.
+[wiki](https://github.com/druids/rui/wiki). All components use Bootstrap classes, but Bootstrap itself is **NOT**
+included (it's up to a host project).
 
 [![CircleCI](https://circleci.com/gh/druids/rui.svg?style=svg)](https://circleci.com/gh/druids/rui)
 [![Dependencies Status](https://jarkeeper.com/druids/rui/status.png)](https://jarkeeper.com/druids/rui)
@@ -19,5 +20,6 @@ Leiningen/Boot
 Documentation
 -------------
 
-* [`rui.alerts` - Bootstraps's alerts](https://github.com/druids/rui/blob/master/src/cljs/rui/alerts/components.cljs)
+* [`rui.alerts` - Bootstrap's alerts](https://github.com/druids/rui/blob/master/src/cljs/rui/alerts/components.cljs)
 * [`rui.flash` - Flash components for messages](https://github.com/druids/rui/blob/master/src/cljs/rui/flash/)
+* [`rui.icons` - Icons components based on Font Awesome](https://github.com/druids/rui/blob/master/src/cljs/rui/icons/)
