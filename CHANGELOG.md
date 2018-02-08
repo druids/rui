@@ -1,3 +1,9 @@
+## 0.3.0
+
+#### New Features
+
+  - Added UI components for forms and functions for handling their states #15
+
 ## 0.2.0
 
 #### New Features
