@@ -57,11 +57,6 @@
       (name state))))
 
 
-(defn form->field-value
-  [form field-id]
-  (get-in form [:fields field-id :value]))
-
-
 (defn form->values
   "Returns `form`'s values as a hashmap."
   [form]
@@ -110,13 +105,15 @@
 
 
 (defn add-form-errors
-  "Adds a given `errors` into the `db` by a given `form-id`"
+  "Adds a given `errors` into the `db` by a given `form-id`.
+   The `errors` should be a map with vectors"
   [db form-id errors]
   (update-in db [:rui::forms form-id :errors] (partial merge-with into) errors))
 
 
 (defn form-errors<response
-  "Takes a response's body as errors and assoc them in the `db` by a `form-id`"
+  "Takes a response's body as errors and assoc them in the `db` by a `form-id`.
+   The `errors` should be a map with vectors"
   [db form-id errors]
   (add-form-errors db form-id (:errors errors)))
 
