@@ -1,4 +1,5 @@
 (ns rui.forms
+  "This namespace exposes a public API of forms."
   (:require
     [rui.forms.components :as components]
     [rui.forms.core :as core]))
@@ -23,3 +24,10 @@
 (def init-form! core/init-form!)
 (def db->form core/db->form)
 (def form->values core/form->values)
+(def init-form core/init-form)
+(def assoc-field-value core/assoc-field-value)
+(def assoc-values core/assoc-values)
+(def add-form-errors core/add-form-errors)
+(def form-errors<response core/form-errors<response)
+(def input-on-change! core/input-on-change!)
+(def input-on-blur! core/input-on-blur!)
