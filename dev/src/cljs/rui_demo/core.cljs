@@ -5,7 +5,8 @@
     [re-frame.core :refer [dispatch dispatch-sync clear-subscription-cache! subscribe reg-sub]]
     [rui-demo.buttons :refer [buttons-demo]]
     [rui-demo.icons :refer [icons-demo]]
-    [rui-demo.flash :refer [flash-demo]]))
+    [rui-demo.flash :refer [flash-demo]]
+    [rui-demo.forms :refer [forms-demo]]))
 
 
 (reg-sub
@@ -21,7 +22,8 @@
        (let [db @db-ref]
          (for [[headline component] [["Flash" flash-demo]
                                      ["Icons" icons-demo]
-                                     ["Buttons" buttons-demo]]]
+                                     ["Buttons" buttons-demo]
+                                     ["Forms" forms-demo]]]
            ^{:key headline}
            [:div.card.mb-3
             [:div.card-header
