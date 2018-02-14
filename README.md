@@ -25,3 +25,4 @@ Documentation
 * [`rui.flash` - Flash components for messages](https://github.com/druids/rui/blob/master/src/cljs/rui/flash/)
 * [`rui.icons` - Icons components based on Font Awesome](https://github.com/druids/rui/blob/master/src/cljs/rui/icons/)
 * [`rui.forms` - Forms UI components and function for handling their states](https://github.com/druids/rui/blob/master/src/cljs/rui/forms/)
+* [`rui.modals` - Bootstrap's modal components and function for handling their states](https://github.com/druids/rui/blob/master/src/cljs/rui/modals/)
