@@ -6,7 +6,8 @@
     [rui-demo.buttons :refer [buttons-demo]]
     [rui-demo.icons :refer [icons-demo]]
     [rui-demo.flash :refer [flash-demo]]
-    [rui-demo.forms :refer [forms-demo]]))
+    [rui-demo.forms :refer [forms-demo]]
+    [rui-demo.modals :refer [modals-demo]]))
 
 
 (reg-sub
@@ -23,7 +24,8 @@
          (for [[headline component] [["Flash" flash-demo]
                                      ["Icons" icons-demo]
                                      ["Buttons" buttons-demo]
-                                     ["Forms" forms-demo]]]
+                                     ["Forms" forms-demo]
+                                     ["Modal" modals-demo]]]
            ^{:key headline}
            [:div.card.mb-3
             [:div.card-header
