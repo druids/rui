@@ -5,9 +5,9 @@
             :url "http://opensource.org/licenses/MIT"}
 
   :dependencies [[org.clojure/clojurescript "1.9.946"]
-                 [ccn "0.1.0"]
+                 [ccn "0.1.1"]
                  [reagent "0.7.0"]
-                 [re-frame "0.10.2"]]
+                 [re-frame "0.10.5"]]
 
   :source-paths ["src/cljs"]
 
@@ -16,7 +16,7 @@
                              [lein-cljsbuild "1.1.7"]
                              [lein-figwheel "0.5.14"]
                              [lein-doo "0.1.8"]]
-                   :dependencies [[org.clojure/clojure "1.8.0"]
+                   :dependencies [[org.clojure/clojure "1.9.0"]
                                   [re-frisk "0.5.3"]
                                   [binaryage/devtools "0.9.9"]]}}
 
