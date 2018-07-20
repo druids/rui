@@ -1,4 +1,4 @@
-(defproject druids/rui "0.3.0"
+(defproject druids/rui "0.4.0"
   :description "UI components based on Reagent and Re-frame"
   :url "https://github.com/druids/rui"
   :license {:name "MIT License"
