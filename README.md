@@ -3,7 +3,7 @@ RUI - Reactive UI components
 
 RUI contains simple reusable UI components based on Reagent and Re-frame. For more information about components see
 [wiki](https://github.com/druids/rui/wiki). All components use Bootstrap classes, but Bootstrap itself is **NOT**
-included (it's up to a host project).
+included (it's up to a host project). Please keep on mind that Re-frame nad Reagent are **NOT** included.
 
 [![CircleCI](https://circleci.com/gh/druids/rui.svg?style=svg)](https://circleci.com/gh/druids/rui)
 [![Dependencies Status](https://jarkeeper.com/druids/rui/status.png)](https://jarkeeper.com/druids/rui)

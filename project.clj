@@ -4,21 +4,21 @@
   :license {:name "MIT License"
             :url "http://opensource.org/licenses/MIT"}
 
-  :dependencies [[org.clojure/clojurescript "1.9.946"]
-                 [ccn "0.1.1"]
-                 [reagent "0.7.0"]
-                 [re-frame "0.10.5"]]
+  :dependencies [[ccn "0.1.1"]]
 
   :source-paths ["src/cljs"]
 
   :profiles {:dev {:plugins [[lein-kibit "0.1.6"]
-                             [jonase/eastwood "0.2.5"]
+                             [jonase/eastwood "0.2.8"]
                              [lein-cljsbuild "1.1.7"]
-                             [lein-figwheel "0.5.14"]
-                             [lein-doo "0.1.8"]]
+                             [lein-figwheel "0.5.16"]
+                             [lein-doo "0.1.10"]]
                    :dependencies [[org.clojure/clojure "1.9.0"]
-                                  [re-frisk "0.5.3"]
-                                  [binaryage/devtools "0.9.9"]]}}
+                                  [org.clojure/clojurescript "1.10.339"]
+                                  [binaryage/devtools "0.9.10"]
+                                  [reagent "0.8.1"]
+                                  [re-frame "0.10.5"]
+                                  [re-frisk "0.5.4"]]}}
 
   :cljsbuild
   {:builds

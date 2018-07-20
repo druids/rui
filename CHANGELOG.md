@@ -1,3 +1,11 @@
+## 0.4.0
+
+#### Changes
+
+  - Upgraded dependencies #21
+  - Excluded main dependencies like Reagent and Re-frame #21
+
+
 ## 0.3.0
 
 #### New Features
