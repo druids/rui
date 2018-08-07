@@ -135,8 +135,8 @@
   (let [field (-> form :fields field-id)
         active? (-> field :value some?)
         errors (-> form :errors field-id)
-        on-change (fn [event]
-                    (dispatch [:rui::forms/forms-input-changed (:id form) field-id (-> event .-target .-value)])
+        on-change (fn [was-keyword? event]
+                    (input-on-change! form field-id (if was-keyword? keyword identity) event)
                     (input-on-blur! form field-id event))
         id (gen-field-id form field-id)]
     (into [:div {:class (css-class "form-group"
@@ -145,12 +145,11 @@
            [:label (merge {:for id, :class "form-control-label"} label-attrs) label]
            [:select (merge {:id id
                             :name id
-                            :on-change on-change
+                            :on-change (partial on-change (->> value-label-pairs (map first) (every? keyword?)))
                             :class (css-class (twbs "form-control" twbs-modifiers)
                                               (field->twbs-class field))}
                            attrs)
-            (for [[value label]
-                  value-label-pairs]
+            (for [[value label] value-label-pairs]
               ^{:key value}
               [:option {:value value} label])]]
           (conj children (when (can-show-errors? field errors) [form-errors errors])))))
