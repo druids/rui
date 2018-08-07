@@ -10,7 +10,7 @@
     [rui.forms.events]))
 
 
-(defn- field->twbs-class
+(defn field->twbs-class
   [field]
   (case (:state field)
     :initial nil
@@ -27,40 +27,73 @@
      [:div {:class (bem "form-errors" "error" [])} message])])
 
 
-(defn- can-show-errors?
+(defn can-show-errors?
   [field errors]
   (and (not= :initial (:state field))
        (seq errors)))
 
 
+(defn radio-input-element
+  "Bare radio input that renders just a div with an input type radio and label. Don't use it directly."
+  [{:keys [id field radio-name choice on-change checked? disabled? label modifiers form field-id]}]
+  (let [chosen-value? (= (:value choice) (:value field))]
+    [:div {:class (css-class "form-check"
+                             (when disabled? "disabled")
+                             (bem "radio" (concat modifiers [(when chosen-value? (field-state form field-id))])))}
+     [:input {:type "radio"
+              :class (css-class "form-check-input" (when chosen-value? (field->twbs-class field)))
+              :id id
+              :name radio-name
+              :value (:value choice)
+              :on-change on-change
+              :checked checked?
+              :disabled disabled?}]
+     label]))
+
+
 (defn radio
-  [form field-id choices & {:keys [modifiers]}]
+  "Radio input field with all functionalities like: updating value, showing an error, ...
+   Required parameters:
+   - `form` a form from the state
+   - `field-id` field is as a keyword
+   - `choices` a all possible values of the radio, a sequence of maps with `:label` and `:value` keys
+   Optional parameters:
+   - `modifiers` a CSS modifiers, a sequence of strings
+   - `component-class-name` a string that is added to 'form-group' Bootstrap element
+   - `renderer` a custom radio renderer, Reagent component that accepts a hashmap with following keys:
+      id, field, radio-name, choice, on-change, checked?, disabled?, label, modifiers, form, field-id, input-el"
+  [form field-id choices & {:keys [modifiers component-class-name renderer]}]
   (let [field (-> form :fields field-id)
         errors (-> form :errors field-id)
-        on-change (fn [event]
-                    (input-on-change! form field-id identity event)
+        on-change (fn [was-keyword? event]
+                    (input-on-change! form field-id (if was-keyword? keyword identity) event)
                     (input-on-blur! form field-id event)
                     (.preventDefault event))
         radio-name (gen-field-id form field-id)]
-    [:div.form-group.radio
+    [:div {:class (css-class "form-group" "radio" component-class-name)}
      (for [choice choices]
        (let [id (gen-field-id form (name (str (name field-id) "-" (str (:value choice)))))
-             disabled? (true? (:disabled? choice))]
-         ^{:key (:value choice)}
-         [:div {:class (css-class "form-check"
-                                  (when disabled? "disabled")
-                                  (bem "radio" (concat modifiers [(field-state form field-id)])))}
-          [:input {:type "radio"
-                   :class (css-class "form-check-input" (field->twbs-class field))
-                   :id id
-                   :name radio-name
-                   :value (:value choice)
-                   :on-change on-change
-                   :checked (or (= (:value field) (:value choice))
-                                (and (nil? (:value field)) (true? (:checked? choice))))
-                   :disabled disabled?}]
-
-          [:label {:class "form-check-label", :for id} (:label choice)]]))
+             disabled? (true? (:disabled? choice))
+             checked? (or (= (:value field) (:value choice))
+                          (and (nil? (:value field)) (true? (:checked? choice))))
+             label [:label {:class "form-check-label", :for id} (:label choice)]
+             input-opts {:id id
+                         :field field
+                         :radio-name radio-name
+                         :choice choice
+                         :on-change (partial on-change (-> choice :value keyword?))
+                         :checked? checked?
+                         :disabled? disabled?
+                         :modifiers modifiers
+                         :form form
+                         :field-id field-id}
+             input-el [radio-input-element (merge input-opts
+                                                  {:label (when-not renderer label)})]]
+         (if (some? renderer)
+           (with-meta [renderer (merge input-opts
+                                       {:input-el input-el})]
+                      {:key (:value choice)})
+           (with-meta input-el {:key (:value choice)}))))
      (when (can-show-errors? field errors)
        [form-errors errors])]))
 
@@ -124,29 +157,57 @@
 
 
 (defn input-field
-  [input-type form field-id label & {:keys [modifiers attrs label-attrs twbs-modifiers]
+  "Input field with all functionalities like: updating value, showing an error, ...
+   Required parameters:
+   - `input-type` a string like: 'text', 'number', ...
+   - `form` a form from the state
+   - `field-id` field is as a keyword
+   - `label` a Reagent valid component or string
+   Optional parameters:
+   - `modifiers` a CSS modifiers, a sequence of strings
+   - `attrs` a hashmap of HTML attributes of the input
+   - `label-attrs` a hashmap of HTML attributes for the label
+   - `twbs-modifiers` Twitter Bootstrap modifiers, a sequence of strings
+   - `input-group-append` a Twitter Bootstrap's 'input-group-append', a Reagent component of string
+   - `input-group-prepend` a Twitter Bootstrap's 'input-group-prepend', a Reagent component of string"
+  [input-type form field-id label & {:keys [modifiers attrs label-attrs twbs-modifiers input-group-append
+                                            input-group-prepend]
                                      :or {modifiers []
                                           attrs {}
                                           label-attrs {}
-                                          twbs-modifiers []}}]
+                                          twbs-modifiers []
+                                          input-group-prepend nil
+                                          input-group-append nil}}]
   (let [id (gen-field-id form field-id)
         field (get-in form [:fields field-id])]
     [:div {:class (css-class "form-group"
-                             (bem "input-field" (conj modifiers (field-state form field-id))))}
+                             (bem "input-field" (name field-id) (conj modifiers (field-state form field-id))))}
      (when (some? label)
        [:label (merge {:for id, :class "form-control-label"}
                       label-attrs)
         label])
-     [:input (merge {:type input-type
-                     :class (css-class (twbs "form-control" twbs-modifiers)
-                                       (field->twbs-class field))
-                     :id id
-                     :name id
-                     :value (-> form :fields field-id :value)
-                     :placeholder label
-                     :on-change (partial input-on-change! form field-id)
-                     :on-blur (partial input-on-blur! form field-id)}
-                    attrs)]
+     [:div {:class (when (or input-group-prepend input-group-append) "input-group")}
+      (when (some? input-group-prepend)
+        [:div.input-group-prepend
+         (if (string? input-group-prepend)
+           [:div.input-group-text input-group-prepend]
+           input-group-prepend)])
+      [:input (merge {:type input-type
+                      :class (css-class (twbs "form-control" twbs-modifiers)
+                                        (field->twbs-class field))
+                      :id id
+                      :name id
+                      :value (-> form :fields field-id :value)
+                      :placeholder label
+                      :on-change (partial input-on-change! form field-id)
+                      :on-blur (partial input-on-blur! form field-id)}
+                     attrs)]
+      (when (some? input-group-append)
+        [:div.input-group-append
+         (if (string? input-group-append)
+           [:div.input-group-text input-group-append]
+           input-group-append)])]
+
      (when (can-show-errors? (-> form :fields field-id) (-> form :errors field-id))
        [form-errors (-> form :errors field-id)])]))
 
