@@ -1,3 +1,10 @@
+## 0.6.0
+
+#### Changes
+
+ - Allow to use keyword as values for select #27
+
+
 ## 0.5.0
 
 #### Changes

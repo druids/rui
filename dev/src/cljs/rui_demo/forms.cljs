@@ -35,6 +35,7 @@
              [forms/input-text form :name "Name" :attrs {:placeholder "Please fill you name"}]
              [forms/input-email form :email "E-mail" :attrs {:placeholder "Please fill you e-mail address"}]
              [forms/select form :children "Children" (map #(vector % %) (range 9))]
+             [forms/select form :language "Language" [[:cs "CS"] [:de "DE"]]]
              [forms/text-area form :notes "Notes" :attrs {:placeholder "Please let us know if you missed something"}]
              [forms/input-text form :sm "Small input"
               :attrs {:placeholder "See I am small"}

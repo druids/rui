@@ -10,6 +10,7 @@ out/
 pom.xml.asc
 pom.xml
 resources/rui-demo/public/js/
+.rebel_readline_history
 
 # IDE
 *.swp
