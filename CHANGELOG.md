@@ -1,3 +1,11 @@
+## 0.5.0
+
+#### Changes
+
+ - Radio field accepts a custom renderer #24
+ - Add input-group-prepend and input-group-append options for input-field #25
+
+
 ## 0.4.0
 
 #### Changes
