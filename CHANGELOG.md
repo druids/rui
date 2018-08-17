@@ -1,3 +1,10 @@
+## 0.7.0
+
+#### New Features
+
+ - A form's validator can errors as a hash-map or errors and coerced model as a vector #29
+
+
 ## 0.6.0
 
 #### Changes
