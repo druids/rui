@@ -67,19 +67,23 @@
 
 
 (defn validate-form
-  "Validates a given `form` by its valdiator. It returns new form with updated values:
+  "Validates a given `form` by its validator. It returns new form with updated values:
    - `errors`
    - `valid?`
-   - every field's `valid?` is updated too"
+   - every field's `valid?` is updated too and field's `value` if coerced"
   [form]
   (let [field-values (form->values form)
         validator (:validator form)
-        errors (validator field-values)]
+        validator-result (validator field-values)
+        [errors model] (if (vector? validator-result) validator-result [validator-result nil])
+        update-value (fn [id value] (if (some? model) (get model id) value))]
     (-> form
         (assoc :errors errors)
         (assoc :valid? (empty? errors))
         (update :fields #(reduce-kv (fn [fields id field]
-                                      (assoc-in fields [id :valid?] (not (contains? errors id))))
+                                      (-> fields
+                                          (assoc-in [id :valid?] (not (contains? errors id)))
+                                          (update-in [id :value] (partial update-value id))))
                                     %
                                     %)))))
 
