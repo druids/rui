@@ -1,3 +1,10 @@
+## 0.8.0
+
+#### New Features
+
+  - Allow to define on-change and on-blur custom handler #31
+
+
 ## 0.7.0
 
 #### New Features
