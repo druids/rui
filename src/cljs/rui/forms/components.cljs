@@ -61,14 +61,17 @@
    - `modifiers` a CSS modifiers, a sequence of strings
    - `component-class-name` a string that is added to 'form-group' Bootstrap element
    - `renderer` a custom radio renderer, Reagent component that accepts a hashmap with following keys:
-      id, field, radio-name, choice, on-change, checked?, disabled?, label, modifiers, form, field-id, input-el"
-  [form field-id choices & {:keys [modifiers component-class-name renderer]}]
+      id, field, radio-name, choice, on-change, checked?, disabled?, label, modifiers, form, field-id, input-el
+   - `on-change` a custom handler that is called after the original on-change handler"
+  [form field-id choices & {:keys [modifiers component-class-name renderer on-change]}]
   (let [field (-> form :fields field-id)
         errors (-> form :errors field-id)
-        on-change (fn [was-keyword? event]
-                    (input-on-change! form field-id (if was-keyword? keyword identity) event)
-                    (input-on-blur! form field-id event)
-                    (.preventDefault event))
+        on-change-internal (fn [was-keyword? event]
+                             (input-on-change! form field-id (if was-keyword? keyword identity) event)
+                             (input-on-blur! form field-id event)
+                             (.preventDefault event)
+                             (when on-change
+                               (on-change event)))
         radio-name (gen-field-id form field-id)]
     [:div {:class (css-class "form-group" "radio" component-class-name)}
      (for [choice choices]
@@ -81,7 +84,7 @@
                          :field field
                          :radio-name radio-name
                          :choice choice
-                         :on-change (partial on-change (-> choice :value keyword?))
+                         :on-change (partial on-change-internal (-> choice :value keyword?))
                          :checked? checked?
                          :disabled? disabled?
                          :modifiers modifiers
@@ -99,16 +102,21 @@
 
 
 (defn checkbox
-  [form field-id label & {:keys [children modifiers attrs]
+  [form field-id label & {:keys [children modifiers attrs on-change]
                           :or {modifiers []
                                children []
                                attrs {}}}]
   (let [field (-> form :fields field-id)
         active? (-> field :value boolean)
         errors (-> form :errors field-id)
-        on-change (fn [event]
-                    (dispatch [:rui::forms/forms-input-changed (:id form) field-id (-> event .-target .-checked)])
-                    (input-on-blur! form field-id event))
+        on-change-internal (fn [event]
+                             (dispatch [:rui::forms/forms-input-changed
+                                        (:id form)
+                                        field-id
+                                        (-> event .-target .-checked)])
+                             (input-on-blur! form field-id event)
+                             (when on-change
+                               (on-change event)))
         id (gen-field-id form field-id)]
     (into [:div {:class (css-class "form-check"
                                    "form-group"
@@ -118,7 +126,7 @@
                            :class (css-class "form-check-input" (field->twbs-class field))
                            :id id
                            :name id
-                           :on-change on-change
+                           :on-change on-change-internal
                            :checked active?}
                           attrs)]
            [:label {:for id, :class "form-check-label"} label]]
@@ -126,7 +134,7 @@
 
 
 (defn select
-  [form field-id label value-label-pairs & {:keys [children modifiers attrs label-attrs twbs-modifiers]
+  [form field-id label value-label-pairs & {:keys [children modifiers attrs label-attrs twbs-modifiers on-change]
                                             :or {modifiers []
                                                  children []
                                                  attrs {}
@@ -135,9 +143,11 @@
   (let [field (-> form :fields field-id)
         active? (-> field :value some?)
         errors (-> form :errors field-id)
-        on-change (fn [was-keyword? event]
-                    (input-on-change! form field-id (if was-keyword? keyword identity) event)
-                    (input-on-blur! form field-id event))
+        on-change-internal (fn [was-keyword? event]
+                             (input-on-change! form field-id (if was-keyword? keyword identity) event)
+                             (input-on-blur! form field-id event)
+                             (when on-change
+                               (on-change event)))
         id (gen-field-id form field-id)]
     (into [:div {:class (css-class "form-group"
                                    (bem "select" (concat modifiers
@@ -145,7 +155,8 @@
            [:label (merge {:for id, :class "form-control-label"} label-attrs) label]
            [:select (merge {:id id
                             :name id
-                            :on-change (partial on-change (->> value-label-pairs (map first) (every? keyword?)))
+                            :on-change (partial on-change-internal
+                                                (->> value-label-pairs (map first) (every? keyword?)))
                             :class (css-class (twbs "form-control" twbs-modifiers)
                                               (field->twbs-class field))}
                            attrs)
@@ -168,9 +179,11 @@
    - `label-attrs` a hashmap of HTML attributes for the label
    - `twbs-modifiers` Twitter Bootstrap modifiers, a sequence of strings
    - `input-group-append` a Twitter Bootstrap's 'input-group-append', a Reagent component of string
-   - `input-group-prepend` a Twitter Bootstrap's 'input-group-prepend', a Reagent component of string"
+   - `input-group-prepend` a Twitter Bootstrap's 'input-group-prepend', a Reagent component of string
+   - `on-change` a custom handler that is called after the original on-change handler
+   - `on-blur` a custom handler that is called after the original on-blur handler"
   [input-type form field-id label & {:keys [modifiers attrs label-attrs twbs-modifiers input-group-append
-                                            input-group-prepend]
+                                            input-group-prepend on-change on-blur]
                                      :or {modifiers []
                                           attrs {}
                                           label-attrs {}
@@ -178,7 +191,15 @@
                                           input-group-prepend nil
                                           input-group-append nil}}]
   (let [id (gen-field-id form field-id)
-        field (get-in form [:fields field-id])]
+        field (get-in form [:fields field-id])
+        on-change-internal (fn [event]
+                             (input-on-change! form field-id event)
+                             (when on-change
+                               (on-change event)))
+        on-blur-internal (fn [event]
+                           (input-on-blur! form field-id event)
+                           (when on-blur
+                             (on-blur event)))]
     [:div {:class (css-class "form-group"
                              (bem "input-field" (name field-id) (conj modifiers (field-state form field-id))))}
      (when (some? label)
@@ -198,8 +219,8 @@
                       :name id
                       :value (-> form :fields field-id :value)
                       :placeholder label
-                      :on-change (partial input-on-change! form field-id)
-                      :on-blur (partial input-on-blur! form field-id)}
+                      :on-change on-change-internal
+                      :on-blur on-blur-internal}
                      attrs)]
       (when (some? input-group-append)
         [:div.input-group-append
@@ -218,10 +239,18 @@
 
 
 (defn input-file
-  [form field-id label & {:keys [modifiers attrs label-attrs twbs-modifiers]
+  [form field-id label & {:keys [modifiers attrs label-attrs twbs-modifiers on-blur on-change]
                           :as kwargs}]
   (let [id (gen-field-id form field-id)
-        field (get-in form [:fields field-id])]
+        field (get-in form [:fields field-id])
+        on-change-internal (fn [event]
+                             (input-on-change! form field-id event)
+                             (when on-change
+                               (on-change event)))
+        on-blur-internal (fn [event]
+                           (input-on-blur! form field-id event)
+                           (when on-blur
+                             (on-blur event)))]
     [:div {:class (css-class "form-group"
                              (bem "input-field" (conj modifiers (field-state form field-id))))}
      [:div.custom-file
@@ -236,21 +265,29 @@
                       :name id
                       :value (-> form :fields field-id :value)
                       :placeholder label
-                      :on-change (partial input-on-change! form field-id)
-                      :on-blur (partial input-on-blur! form field-id)}
+                      :on-change on-change-internal
+                      :on-blur on-blur-internal}
                      attrs)]
       (when (can-show-errors? (-> form :fields field-id) (-> form :errors field-id))
         [form-errors (-> form :errors field-id)])]]))
 
 
 (defn text-area
-  [form field-id label & {:keys [modifiers attrs label-attrs twbs-modifiers]
+  [form field-id label & {:keys [modifiers attrs label-attrs twbs-modifiers on-blur on-change]
                           :or {modifiers []
                                attrs {}
                                label-attrs {}
                                twbs-modifiers []}}]
   (let [id (gen-field-id form field-id)
-        field (get-in form [:fields field-id])]
+        field (get-in form [:fields field-id])
+        on-change-internal (fn [event]
+                             (input-on-change! form field-id event)
+                             (when on-change
+                               (on-change event)))
+        on-blur-internal (fn [event]
+                           (input-on-blur! form field-id event)
+                           (when on-blur
+                             (on-blur event)))]
     [:div {:class (css-class "form-group"
                              (bem "text-area" (conj modifiers (field-state form field-id))))}
      (when (some? label)
@@ -263,8 +300,8 @@
                         :name id
                         :value (-> form :fields field-id :value)
                         :placeholder label
-                        :on-change (partial input-on-change! form field-id)
-                        :on-blur (partial input-on-blur! form field-id)}
+                        :on-change on-change-internal
+                        :on-blur on-blur-internal}
                        attrs)]
      (when (can-show-errors? (-> form :fields field-id) (-> form :errors field-id))
        [form-errors (-> form :errors field-id)])]))
