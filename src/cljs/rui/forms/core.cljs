@@ -112,7 +112,12 @@
   "Adds a given `errors` into the `db` by a given `form-id`.
    The `errors` should be a map with vectors"
   [db form-id errors]
-  (update-in db [:rui::forms form-id :errors] (partial merge-with into) errors))
+  (-> db
+      (update-in db [:rui::forms form-id :errors] (partial merge-with into) errors)
+      (update-in db [:rui::forms form-id :valid?] false)
+      (update-in db [:rui::forms form-id :fields] (reduce (fn [fields k]
+                                                            (assoc-in fields [k :state] :invalid))
+                                                          (keys errors)))))
 
 
 (defn form-errors<response
