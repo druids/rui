@@ -226,10 +226,10 @@
         [:div.input-group-append
          (if (string? input-group-append)
            [:div.input-group-text input-group-append]
-           input-group-append)])]
+           input-group-append)]
 
-     (when (can-show-errors? (-> form :fields field-id) (-> form :errors field-id))
-       [form-errors (-> form :errors field-id)])]))
+       (when (can-show-errors? (-> form :fields field-id) (-> form :errors field-id))
+         [form-errors (-> form :errors field-id)]))]]))
 
 
 (def input-text (partial input-field "text"))
