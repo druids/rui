@@ -1,3 +1,11 @@
+## 0.9.0
+
+#### New Features
+
+  - Fix Change a state of a field to invalid, when an error is added #33
+  - Move field's errors into its parent element #33
+
+
 ## 0.8.0
 
 #### New Features
