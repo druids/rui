@@ -1,3 +1,10 @@
+## 0.9.1
+
+#### Fixes
+
+  - Fix forms/validate-form deletes an invalid value of a field #36
+
+
 ## 0.9.0
 
 #### New Features
