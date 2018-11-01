@@ -76,7 +76,10 @@
         validator (:validator form)
         validator-result (validator field-values)
         [errors model] (if (vector? validator-result) validator-result [validator-result nil])
-        update-value (fn [id value] (if (some? model) (get model id) value))]
+        update-value (fn [id old-value]
+                       (if-some [new-value (get model id)]
+                         new-value
+                         old-value))]
     (-> form
         (assoc :errors errors)
         (assoc :valid? (empty? errors))
