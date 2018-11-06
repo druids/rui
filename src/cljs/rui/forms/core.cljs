@@ -99,6 +99,12 @@
       (update-in [:rui::forms (:id form-map)] validate-form)))
 
 
+(defn dissoc-forms
+  "Disssoc forms from the `db` by given `ids`"
+  [db ids]
+  (apply update (concat [db :rui::forms dissoc] ids)))
+
+
 (defn assoc-field-value
   "Assocs a given `value` into the `db` by a given `form-id` and `field-id`"
   [db form-id field-id value]
