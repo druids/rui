@@ -1,3 +1,14 @@
+## 0.10.0
+
+#### Fixes
+
+  - Select component doesn't render selected choice as selected in HTML #38
+
+#### new Features
+
+  - Add delete-forms function to forms API #39
+
+
 ## 0.9.1
 
 #### Fixes
