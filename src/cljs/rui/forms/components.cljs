@@ -162,7 +162,7 @@
                            attrs)
             (for [[value label] value-label-pairs]
               ^{:key value}
-              [:option {:value value} label])]]
+              [:option (merge {:value value} (when (= (:value field) value) {:selected true})) label])]]
           (conj children (when (can-show-errors? field errors) [form-errors errors])))))
 
 
