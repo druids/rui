@@ -1,3 +1,9 @@
+## 0.10.1
+
+#### Fixes
+
+ - Fix #42 React warning about defaultValue on select
+
 ## 0.10.0
 
 #### Fixes
