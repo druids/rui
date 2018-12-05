@@ -150,8 +150,10 @@
                                (on-change event)))
         id (gen-field-id form field-id)]
     (into [:div {:class (css-class "form-group"
-                                   (bem "select" (concat modifiers
-                                                         [(when active? "active") (field-state form field-id)])))}
+                                   (bem "select"
+                                        (concat modifiers
+                                                [(when active? "active")
+                                                 (field-state form field-id)])))}
            [:label (merge {:for id, :class "form-control-label"} label-attrs) label]
            [:select (merge {:id id
                             :name id
@@ -159,10 +161,12 @@
                                                 (->> value-label-pairs (map first) (every? keyword?)))
                             :class (css-class (twbs "form-control" twbs-modifiers)
                                               (field->twbs-class field))}
-                           attrs)
+                           attrs
+                           (when (some? (:value field))
+                             {:default-value (:value field)}))
             (for [[value label] value-label-pairs]
               ^{:key value}
-              [:option (merge {:value value} (when (= (:value field) value) {:selected true})) label])]]
+              [:option {:value value} label])]]
           (conj children (when (can-show-errors? field errors) [form-errors errors])))))
 
 
