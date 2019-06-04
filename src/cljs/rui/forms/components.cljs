@@ -6,9 +6,12 @@
     [ccn.core :refer [bem css-class twbs]]
     [re-frame.core :refer [dispatch]]
     [rui.buttons :refer [button-primary]]
-    [rui.forms.core :refer [field-state input-on-change! input-on-blur! gen-field-id]]
+    [rui.forms.core :refer
+     [field-state input-on-change! input-on-blur!
+      gen-field-id]]
     [rui.forms.events]))
 
+(def default-required-mark " *")
 
 (defn field->twbs-class
   [field]
@@ -62,8 +65,12 @@
    - `component-class-name` a string that is added to 'form-group' Bootstrap element
    - `renderer` a custom radio renderer, Reagent component that accepts a hashmap with following keys:
       id, field, radio-name, choice, on-change, checked?, disabled?, label, modifiers, form, field-id, input-el
-   - `on-change` a custom handler that is called after the original on-change handler"
-  [form field-id choices & {:keys [modifiers component-class-name renderer on-change]}]
+   - `on-change` a custom handler that is called after the original on-change handler
+  - `required-mark` a valid Hiccup what will be shown when a field is required"
+  [form field-id choices
+   & {:keys [modifiers component-class-name renderer on-change
+             required-mark]
+      :or {required-mark default-required-mark}}]
   (let [field (-> form :fields field-id)
         errors (-> form :errors field-id)
         on-change-internal (fn [was-keyword? event]
@@ -79,7 +86,10 @@
              disabled? (true? (:disabled? choice))
              checked? (or (= (:value field) (:value choice))
                           (and (nil? (:value field)) (true? (:checked? choice))))
-             label [:label {:class "form-check-label", :for id} (:label choice)]
+             label [:label {:class "form-check-label", :for id}
+                    (:label choice)
+                    (when (:required? field)
+                      required-mark)]
              input-opts {:id id
                          :field field
                          :radio-name radio-name
@@ -102,10 +112,12 @@
 
 
 (defn checkbox
-  [form field-id label & {:keys [children modifiers attrs on-change]
-                          :or {modifiers []
-                               children []
-                               attrs {}}}]
+  [form field-id label
+   & {:keys [children modifiers attrs on-change required-mark]
+      :or {modifiers []
+           children []
+           attrs {}
+           required-mark default-required-mark}}]
   (let [field (-> form :fields field-id)
         active? (-> field :value boolean)
         errors (-> form :errors field-id)
@@ -129,17 +141,23 @@
                            :on-change on-change-internal
                            :checked active?}
                           attrs)]
-           [:label {:for id, :class "form-check-label"} label]]
+           [:label {:for id, :class "form-check-label"}
+            label
+            (when (:required? field)
+              required-mark)]]
           (conj children (when (can-show-errors? field errors) [form-errors errors])))))
 
 
 (defn select
-  [form field-id label value-label-pairs & {:keys [children modifiers attrs label-attrs twbs-modifiers on-change]
-                                            :or {modifiers []
-                                                 children []
-                                                 attrs {}
-                                                 label-attrs {}
-                                                 twbs-modifiers []}}]
+  [form field-id label value-label-pairs
+   & {:keys [children modifiers attrs label-attrs twbs-modifiers
+             on-change required-mark]
+      :or {modifiers []
+           children []
+           attrs {}
+           label-attrs {}
+           required-mark default-required-mark
+           twbs-modifiers []}}]
   (let [field (-> form :fields field-id)
         active? (-> field :value some?)
         errors (-> form :errors field-id)
@@ -154,7 +172,11 @@
                                         (concat modifiers
                                                 [(when active? "active")
                                                  (field-state form field-id)])))}
-           [:label (merge {:for id, :class "form-control-label"} label-attrs) label]
+           [:label (merge {:for id, :class "form-control-label"}
+                          label-attrs)
+            label
+            (when (:required? field)
+              required-mark)]
            [:select (merge {:id id
                             :name id
                             :on-change (partial on-change-internal
@@ -185,15 +207,19 @@
    - `input-group-append` a Twitter Bootstrap's 'input-group-append', a Reagent component of string
    - `input-group-prepend` a Twitter Bootstrap's 'input-group-prepend', a Reagent component of string
    - `on-change` a custom handler that is called after the original on-change handler
-   - `on-blur` a custom handler that is called after the original on-blur handler"
-  [input-type form field-id label & {:keys [modifiers attrs label-attrs twbs-modifiers input-group-append
-                                            input-group-prepend on-change on-blur]
-                                     :or {modifiers []
-                                          attrs {}
-                                          label-attrs {}
-                                          twbs-modifiers []
-                                          input-group-prepend nil
-                                          input-group-append nil}}]
+   - `on-blur` a custom handler that is called after the original on-blur handler
+  - `required-mark` a valid Hiccup what will be shown when a field is required"
+  [input-type form field-id label
+   & {:keys [modifiers attrs label-attrs twbs-modifiers
+             input-group-append input-group-prepend on-change
+             on-blur required-mark]
+      :or {modifiers []
+           attrs {}
+           label-attrs {}
+           twbs-modifiers []
+           input-group-prepend nil
+           input-group-append nil
+           required-mark default-required-mark}}]
   (let [id (gen-field-id form field-id)
         field (get-in form [:fields field-id])
         on-change-internal (fn [event]
@@ -209,7 +235,9 @@
      (when (some? label)
        [:label (merge {:for id, :class "form-control-label"}
                       label-attrs)
-        label])
+        label
+        (when (:required? field)
+          required-mark)])
      [:div {:class (when (or input-group-prepend input-group-append) "input-group")}
       (when (some? input-group-prepend)
         [:div.input-group-prepend
@@ -243,8 +271,11 @@
 
 
 (defn input-file
-  [form field-id label & {:keys [modifiers attrs label-attrs twbs-modifiers on-blur on-change]
-                          :as kwargs}]
+  [form field-id label
+   & {:keys [modifiers attrs label-attrs twbs-modifiers on-blur
+             on-change required-mark]
+      :or {required-mark default-required-mark}
+      :as kwargs}]
   (let [id (gen-field-id form field-id)
         field (get-in form [:fields field-id])
         on-change-internal (fn [event]
@@ -261,7 +292,9 @@
       (when (some? label)
         [:label (merge {:for id, :class "form-control-label"}
                        label-attrs)
-         label])
+         label
+         (when (:required? field)
+           required-mark)])
       [:input (merge {:type "file"
                       :class (css-class (twbs "form-control-file" twbs-modifiers)
                                         (field->twbs-class field))
@@ -277,11 +310,14 @@
 
 
 (defn text-area
-  [form field-id label & {:keys [modifiers attrs label-attrs twbs-modifiers on-blur on-change]
-                          :or {modifiers []
-                               attrs {}
-                               label-attrs {}
-                               twbs-modifiers []}}]
+  [form field-id label
+   & {:keys [modifiers attrs label-attrs twbs-modifiers on-blur
+             on-change required-mark]
+      :or {modifiers []
+           attrs {}
+           label-attrs {}
+           required-mark default-required-mark
+           twbs-modifiers []}}]
   (let [id (gen-field-id form field-id)
         field (get-in form [:fields field-id])
         on-change-internal (fn [event]
@@ -297,7 +333,9 @@
      (when (some? label)
        [:label (merge {:for id, :class "form-control-label"}
                       label-attrs)
-        label])
+        label
+        (when (:required? field)
+          required-mark)])
      [:textarea (merge {:class (css-class (twbs "form-control" twbs-modifiers)
                                           (field->twbs-class field))
                         :id id
