@@ -1,3 +1,7 @@
+## 0.11.0
+
+ - Fix #44 allow to mark a fields as required
+
 ## 0.10.1
 
 #### Fixes
