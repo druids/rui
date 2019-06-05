@@ -10,7 +10,7 @@
 
 
 ;; represent a form field
-(defrecord Field [id value valid? state blured?])
+(defrecord Field [id value valid? state blured? required?])
 
 ;; represent a form itself
 (defrecord Form [id fields valid? errors validator])
@@ -32,7 +32,7 @@
   ([id]
    (init-field id nil))
   ([id value]
-   (->Field id value false :initial false)))
+   (->Field id value false :initial false false)))
 
 
 (defn create-form
