@@ -38,7 +38,7 @@
   ([id]
    (init-field id nil))
   ([id value]
-   (->Field id value false :initial false false nil)))
+   (->Field id value false :initial false false value)))
 
 
 (defn create-form
