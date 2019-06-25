@@ -9,17 +9,19 @@
 
 (def form-id :demo)
 
+(defn parse-int
+  [n]
+  (when (some? n)
+   (try (js/parseInt n 10)
+        (catch js/Error _ nil))))
 
 (defn validator
   [values]
   (if (-> values :name blank?)
     [{:name ["Name cannot be blank"]} nil]
-    [nil (update values
-                 :age
-                 #(when (some? %)
-                    (try (js/parseInt % 10)
-                         (catch js/Error _ nil))))]))
-
+    [nil (-> values
+             (update :age parse-int)
+             (update :children parse-int))]))
 
 (defn forms-demo
   [db]
@@ -31,6 +33,7 @@
      #(forms/init-form! form-id
                         validator
                         {:name "initial name"
+                         :children 0
                          :language :sv
                          :age nil})
 
