@@ -1,3 +1,7 @@
+## 0.12.0
+
+ - Fix #46 store coerce value into coerced-value field
+
 ## 0.11.0
 
  - Fix #44 allow to mark a fields as required
