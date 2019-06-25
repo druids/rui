@@ -1,3 +1,7 @@
+## 0.13.0
+
+ - Fix #48 merge initial value to coerced-value too
+
 ## 0.12.0
 
  - Fix #46 store coerce value into coerced-value field
