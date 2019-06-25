@@ -23,6 +23,7 @@
 ;; state functions
 (def init-form! core/init-form!)
 (def db->form core/db->form)
+(def form->coerced-values core/form->coerced-values)
 (def form->values core/form->values)
 (def init-form core/init-form)
 (def assoc-field-value core/assoc-field-value)

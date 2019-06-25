@@ -10,7 +10,13 @@
 
 
 ;; represent a form field
-(defrecord Field [id value valid? state blured? required?])
+(defrecord Field [id
+                  value
+                  valid?
+                  state
+                  blured?
+                  required?
+                  coerced-value])
 
 ;; represent a form itself
 (defrecord Form [id fields valid? errors validator])
@@ -32,14 +38,17 @@
   ([id]
    (init-field id nil))
   ([id value]
-   (->Field id value false :initial false false)))
+   (->Field id value false :initial false false nil)))
 
 
 (defn create-form
   "Creates a `Form` from a given `map`."
   [form-map init-values]
   (-> {:fields (reduce-kv (fn [fields field-id init-value]
-                            (assoc fields field-id (init-field field-id init-value)))
+                            (assoc fields
+                                   field-id
+                                   (init-field field-id
+                                               init-value)))
                           {}
                           init-values)
        :errors {}
@@ -57,14 +66,27 @@
       (name state))))
 
 
-(defn form->values
-  "Returns `form`'s values as a hashmap."
-  [form]
+(defn- form->*values
+  [key-name form]
   (reduce-kv (fn [values id field]
-               (assoc values id (:value field)))
+               (assoc values id (get field key-name)))
              {}
              (:fields form)))
 
+(def form->values (partial form->*values :value))
+
+(def form->coerced-values (partial form->*values :coerced-value))
+
+(defn- update-validated-fields
+  [errors update-coerced-value fields]
+  (reduce-kv (fn [fields id field]
+               (-> fields
+                   (assoc-in [id :valid?]
+                             (not (contains? errors id)))
+                   (update-in [id :coerced-value]
+                              (partial update-coerced-value id))))
+            fields
+            fields))
 
 (defn validate-form
   "Validates a given `form` by its validator. It returns new form with updated values:
@@ -75,21 +97,22 @@
   (let [field-values (form->values form)
         validator (:validator form)
         validator-result (validator field-values)
-        [errors model] (if (vector? validator-result) validator-result [validator-result nil])
-        update-value (fn [id old-value]
-                       (if-some [new-value (get model id)]
-                         new-value
-                         old-value))]
+        [errors model] (if (vector? validator-result)
+                         validator-result
+                         [validator-result nil])
+        update-coerced-value
+        (fn [id old-value]
+          (if-some [new-value (get model id)]
+            new-value
+            old-value))]
     (-> form
         (assoc :errors errors)
         (assoc :valid? (empty? errors))
-        (update :fields #(reduce-kv (fn [fields id field]
-                                      (-> fields
-                                          (assoc-in [id :valid?] (not (contains? errors id)))
-                                          (update-in [id :value] (partial update-value id))))
-                                    %
-                                    %)))))
-
+        (update :fields
+                (partial
+                 update-validated-fields
+                 errors
+                 update-coerced-value)))))
 
 (defn init-form
   "Initializes a form in the `db` within `form-map` and `initial-values`"
