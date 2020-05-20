@@ -1,3 +1,7 @@
+## 0.14.0
+
+ - Replace deprecated function in Reagent #50
+
 ## 0.13.0
 
  - Fix #48 merge initial value to coerced-value too
