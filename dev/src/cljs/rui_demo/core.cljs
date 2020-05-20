@@ -1,14 +1,14 @@
 (ns rui-demo.core
   (:require
-    [goog.dom :as dom]
-    [reagent.core :as reagent]
-    [re-frame.core :refer [dispatch dispatch-sync clear-subscription-cache! subscribe reg-sub]]
-    [rui-demo.buttons :refer [buttons-demo]]
-    [rui-demo.icons :refer [icons-demo]]
-    [rui-demo.flash :refer [flash-demo]]
-    [rui-demo.forms :refer [forms-demo]]
-    [rui-demo.modals :refer [modals-demo]]))
-
+   [goog.dom :as dom]
+   [re-frame.core :refer [dispatch dispatch-sync clear-subscription-cache! subscribe reg-sub]]
+   [reagent.core :as reagent]
+   [reagent.dom :as rdom]
+   [rui-demo.buttons :refer [buttons-demo]]
+   [rui-demo.flash :refer [flash-demo]]
+   [rui-demo.forms :refer [forms-demo]]
+   [rui-demo.icons :refer [icons-demo]]
+   [rui-demo.modals :refer [modals-demo]]))
 
 (reg-sub
   :app
@@ -35,7 +35,7 @@
 
 (defn- mount-root!
   [app-element]
-  (reagent/render [main] app-element))
+  (rdom/render [main] app-element))
 
 
 (defn ^:export run
