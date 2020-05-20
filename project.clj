@@ -16,8 +16,8 @@
                    :dependencies [[org.clojure/clojure "1.9.0"]
                                   [org.clojure/clojurescript "1.10.339"]
                                   [binaryage/devtools "0.9.10"]
-                                  [reagent "0.8.1"]
-                                  [re-frame "0.10.5"]
+                                  [reagent "0.10.0"]
+                                  [re-frame "0.12.0"]
                                   [re-frisk "0.5.4"]]}}
 
   :cljsbuild

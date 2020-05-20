@@ -1,10 +1,11 @@
 (ns rui.modals.components
   (:require
-    [goog.dom.classlist :as classes]
-    [goog.style :as style]
-    [goog.string :refer [unescapeEntities]]
     [ccn.core :refer [bem css-class twbs]]
+    [goog.dom.classlist :as classes]
+    [goog.string :refer [unescapeEntities]]
+    [goog.style :as style]
     [reagent.core :as reagent]
+    [reagent.dom :as dom]
     [rui.modals.events]))
 
 
@@ -72,7 +73,7 @@
   "Toggles modal's visibility by modifing DOM (due Bootstrap's design)."
   [this]
   (let [state (reagent/props this)
-        el (reagent/dom-node this)
+        el (dom/dom-node this)
         modal-el (.querySelector el ".modal")
         backdrop-el (.querySelector el ".modal-backdrop")]
     (if (:opened? state)
